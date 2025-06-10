@@ -163,7 +163,7 @@ pipeline {
                         <p><a href="${env.BUILD_URL}console">View Console Output</a></p>
                         """,
                         mimeType: 'text/html',
-                        to: 'your.email@example.com'
+                        to: 'rakha.tradersfamily@gmail.com'
                     )
                 }
             }
@@ -203,7 +203,7 @@ pipeline {
                 <p>Commit: ${env.GIT_COMMIT}</p>
                 """,
                 mimeType: 'text/html',
-                to: 'your.email@example.com, another.teammate@example.com'
+                to: 'rakha.tradersfamily@gmail.com, another.teammate@example.com'
             )
         }
 
@@ -223,7 +223,7 @@ pipeline {
                 <p><a href="${env.BUILD_URL}testReport">View Test Results</a></p>
                 """,
                 mimeType: 'text/html',
-                to: 'your.email@example.com'
+                to: 'rakha.tradersfamily@gmail.com'
             )
         }
     }
