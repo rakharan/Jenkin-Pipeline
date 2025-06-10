@@ -188,7 +188,7 @@ pipeline {
                 discordSend title: 'Deployment Status: SUCCESS',
                 webhookURL: "${env.DISCORD_WEBHOOK}",
                 description: "Build #${env.BUILD_NUMBER} completed successfully.",
-                link: env.BUILD_URL
+                link: env.BUILD_URL,
                 footer: "Deployment Status: SUCCESS",
             }
         }
@@ -199,7 +199,7 @@ pipeline {
                 discordSend title: "Build Failed: ${env.JOB_NAME}",
                 webhookURL: "${env.DISCORD_WEBHOOK}",
                 description: "Build #${env.BUILD_NUMBER} failed. Please check the logs.",
-                link: env.BUILD_URL
+                link: env.BUILD_URL,
                 footer: "Deployment Status: FAILED",
             }
         }
@@ -210,7 +210,7 @@ pipeline {
                 discordSend title: "Build Unstable: ${env.JOB_NAME}",
                 webhookURL: "${env.DISCORD_WEBHOOK}",
                 description: "Build #${env.BUILD_NUMBER} completed, but tests failed.",
-                link: env.BUILD_URL
+                link: env.BUILD_URL,
                 footer: "Deployment Status: UNSTABLE",
             }
         }
