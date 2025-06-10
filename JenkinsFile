@@ -1,3 +1,4 @@
+// Jenkinsfile - CORRECTED FOR WINDOWS
 pipeline {
     agent any
 
@@ -6,6 +7,7 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout Code') {
             steps {
                 cleanWs()
@@ -15,14 +17,17 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                echo 'Installing dependencies...'
-                bat 'npm ci'
+                cache(path: 'node_modules', key: "npm-${hashFiles('package-lock.json')}") {
+                    // Use 'bat' for Windows
+                    bat 'npm ci'
+                }
             }
         }
 
         stage('Lint Code') {
             steps {
                 echo 'Running linter...'
+                // Use 'bat' for Windows
                 bat 'npm run lint'
             }
         }
@@ -30,13 +35,20 @@ pipeline {
         stage('Run Unit Tests') {
             steps {
                 echo 'Running unit tests...'
-                bat 'npm test'
+                // Use 'bat' for Windows
+                bat 'npm test -- --reporters=default --reporters=jest-junit'
+            }
+            post {
+                always {
+                    junit 'junit.xml'
+                }
             }
         }
 
         stage('Build Application') {
             steps {
                 echo 'Building TypeScript to JavaScript...'
+                // Use 'bat' for Windows
                 bat 'npm run build'
             }
         }
@@ -44,7 +56,7 @@ pipeline {
         stage('Archive Artifacts') {
             steps {
                 echo 'Archiving build artifacts...'
-                archiveArtifacts artifacts: 'dist/**', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'dist/**, package.json, package-lock.json', followSymlinks: false
             }
         }
     }
