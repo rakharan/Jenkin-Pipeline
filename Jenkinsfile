@@ -189,7 +189,7 @@ pipeline {
                 webhookURL: "${env.DISCORD_WEBHOOK}",
                 description: "Build #${env.BUILD_NUMBER} completed successfully.",
                 link: env.BUILD_URL,
-                footer: "Deployment Status: SUCCESS",
+                footer: "Deployment Status: SUCCESS"
             }
         }
 
@@ -200,7 +200,7 @@ pipeline {
                 webhookURL: "${env.DISCORD_WEBHOOK}",
                 description: "Build #${env.BUILD_NUMBER} failed. Please check the logs.",
                 link: env.BUILD_URL,
-                footer: "Deployment Status: FAILED",
+                footer: "Deployment Status: FAILED"
             }
         }
 
@@ -211,7 +211,7 @@ pipeline {
                 webhookURL: "${env.DISCORD_WEBHOOK}",
                 description: "Build #${env.BUILD_NUMBER} completed, but tests failed.",
                 link: env.BUILD_URL,
-                footer: "Deployment Status: UNSTABLE",
+                footer: "Deployment Status: UNSTABLE"
             }
         }
     }
