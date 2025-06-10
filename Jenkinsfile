@@ -3,6 +3,13 @@ pipeline {
     // 1. Specify the agent (where to run)
     agent any
 
+    environment {
+        // Define the Docker Hub credential ID and your username
+        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
+        DOCKER_HUB_USERNAME = 'rakhatf' // <== CHANGE THIS
+        IMAGE_NAME = "${DOCKER_HUB_USERNAME}/my-typescript-app"
+    }
+
     // 2. Define the tools needed for the pipeline
     tools {
         // Use the NodeJS tool you configured in Jenkins Global Tool Configuration
@@ -101,24 +108,38 @@ pipeline {
             }
         }
 
-        stage('Build Application') {
+        stage('Build Docker Image') {
             steps {
-                echo 'Building TypeScript to JavaScript...'
-                // Executes the 'build' script from package.json (runs tsc)
-                bat 'npm run build'
+                echo "Building Docker image: ${IMAGE_NAME}:${env.BUILD_NUMBER}"
+                
+                // Use the Docker Pipeline plugin to build the image from our Dockerfile
+                // The return value is an object representing the built image
+                script {
+                    def customImage = docker.build(IMAGE_NAME, ".")
+                }
             }
         }
 
-        stage('Archive Artifacts') {
+        stage('Push Docker Images') {
+             // This stage will only run on the main branch, to avoid pushing
+            // images from every single feature branch.
+            when {
+                branch 'main'
+            }
             steps {
-                echo 'Archiving build artifacts...'
-                // This saves the 'dist' folder (your compiled JS) and other important files
-                // as build artifacts, which can be downloaded or used by downstream jobs.
+                echo "Pushing Docker image to Docker Hub..."
+                
+                // Jenkins will log in to Docker Hub using the credentials,
+                // execute the push, and then log out.
                 script {
-                    if (fileExists('dist')) {
-                        archiveArtifacts artifacts: 'dist/**, package.json, package-lock.json', followSymlinks: false
-                    } else {
-                        echo 'No dist folder found - skipping artifact archiving'
+                    docker.withRegistry("https://registry.hub.docker.com", DOCKER_CREDENTIALS_ID) {
+                        
+                        // Tag the image with the build number
+                        def customImage = docker.image(IMAGE_NAME)
+                        customImage.push("${env.BUILD_NUMBER}")
+                        
+                        // Also tag it with 'latest' for convenience
+                        customImage.push("latest")
                     }
                 }
             }

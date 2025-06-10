@@ -1,0 +1,16 @@
+# .dockerignore
+
+# Dependencies are installed inside the container, so don't copy the local ones
+node_modules
+
+# Build output is generated inside the container, so don't copy the local one
+dist
+
+# Jenkins-specific cache file
+.deps-cache
+
+# Logs
+npm-debug.log
+
+# Environment variables
+.env
