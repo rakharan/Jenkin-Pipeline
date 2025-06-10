@@ -19,6 +19,19 @@ pipeline {
     // 3. Define the stages of your pipeline
     stages {
 
+         stage('Notify Discord') {
+                steps {
+                    script {
+                        discordSend title: 'Deployment Status: STARTED',
+                        description: "Deployment started", 
+                        footer: "Deployment Status: STARTED", 
+                        link: env.BUILD_URL, 
+                        result: currentBuild.currentResult, 
+                        webhookURL: "${env.DISCORD_WEBHOOK}"
+                    }
+                }
+            }
+
         stage('Checkout Code') {
             steps {
                 // Cleans the workspace before checkout
@@ -172,36 +185,31 @@ pipeline {
         success {
             echo 'Pipeline succeeded!'
             script {
-                    discordSend(
+                    discordSend title: 'Deployment Status: SUCCESS',
                     webhookURL: "${env.DISCORD_WEBHOOK}",
-                    title: "✅ Build Succeeded: ${env.JOB_NAME}",
+                    title: "Build Succeeded: ${env.JOB_NAME}",
                     description: "Build #${env.BUILD_NUMBER} completed successfully.",
-                    color: '#00ff00', // Green
                     link: env.BUILD_URL
-                )
             }
         }
 
         failure {
             echo 'Pipeline failed!'
-            discordSend(
+            discordSend
                 webhookURL: "${env.DISCORD_WEBHOOK}",
-                title: "❌ Build Failed: ${env.JOB_NAME}",
+                title: "Build Failed: ${env.JOB_NAME}",
                 description: "Build #${env.BUILD_NUMBER} failed. Please check the logs.",
-                color: '#ff0000', // Red
                 link: env.BUILD_URL
-            )
+                footer: "Deployment Status: FAILED", 
         }
 
         unstable {
             echo 'Pipeline is unstable (tests failed but build succeeded)'
-            discordSend(
+            discordSend
                 webhookURL: "${env.DISCORD_WEBHOOK}",
-                title: "⚠️ Build Unstable: ${env.JOB_NAME}",
+                title: "Build Unstable: ${env.JOB_NAME}",
                 description: "Build #${env.BUILD_NUMBER} completed, but tests failed.",
-                color: '#ffff00', // Yellow
                 link: env.BUILD_URL
-            )
         }
     }
 }
