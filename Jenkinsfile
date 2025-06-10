@@ -145,25 +145,86 @@ pipeline {
         always {
             echo 'Pipeline finished.'
             
-            // Send a generic email notification
-            emailext (
-                subject: "Build Status: ${currentBuild.currentResult} - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """<p>Check console output at <a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a></p>
-                         <p><b>Build Log:</b></p>
-                         <pre>${currentBuild.rawBuild.getLog(150)}</pre>""",
-                to: 'your.email@example.com, another.teammate@example.com'
-            )
+            script {
+                // Only send email on success if it was previously failing
+                if (currentBuild.getPreviousBuild()?.result == 'FAILURE') {
+                    emailext (
+                        subject: "✅ Build Fixed - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                        body: """
+                        <h3>🎉 Build is now working!</h3>
+                        <p><b>Job:</b> ${env.JOB_NAME}</p>
+                        <p><b>Build Number:</b> ${env.BUILD_NUMBER}</p>
+                        <p><b>Branch:</b> ${env.GIT_BRANCH}</p>
+                        <p><b>Duration:</b> ${currentBuild.durationString}</p>
+                        
+                        <p>The build that was previously failing is now successful.</p>
+                        
+                        <p><a href="${env.BUILD_URL}">View Build Details</a></p>
+                        <p><a href="${env.BUILD_URL}console">View Console Output</a></p>
+                        """,
+                        mimeType: 'text/html',
+                        to: 'your.email@example.com'
+                    )
+                }
+            }
 
             // Clean up the workspace to save disk space
             cleanWs()
         }
+
         success {
             echo 'Pipeline succeeded!'
             // You could add a notification step here (e.g., Slack or email)
         }
+
         failure {
             echo 'Pipeline failed!'
             // You could add a failure notification here
+            emailext (
+                subject: "❌ Build Failed - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+                <h3>🚨 Build Failed</h3>
+                <p><b>Job:</b> ${env.JOB_NAME}</p>
+                <p><b>Build Number:</b> ${env.BUILD_NUMBER}</p>
+                <p><b>Branch:</b> ${env.GIT_BRANCH}</p>
+                <p><b>Duration:</b> ${currentBuild.durationString}</p>
+                
+                <p><b>What to do:</b></p>
+                <ul>
+                    <li>Check the console output for error details</li>
+                    <li>Review recent commits that might have caused the issue</li>
+                    <li>Run tests locally to reproduce the problem</li>
+                </ul>
+                
+                <p><a href="${env.BUILD_URL}console">View Console Output</a></p>
+                <p><a href="${env.BUILD_URL}">View Build Details</a></p>
+                
+                <p><b>Recent Changes:</b></p>
+                <p>Commit: ${env.GIT_COMMIT}</p>
+                """,
+                mimeType: 'text/html',
+                to: 'your.email@example.com, another.teammate@example.com'
+            )
+        }
+
+        unstable {
+            echo 'Pipeline is unstable (tests failed but build succeeded)'
+            emailext (
+                subject: "⚠️ Build Unstable - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+                <h3>⚠️ Build Unstable</h3>
+                <p>The build completed but some tests failed or there are warnings.</p>
+                
+                <p><b>Job:</b> ${env.JOB_NAME}</p>
+                <p><b>Build Number:</b> ${env.BUILD_NUMBER}</p>
+                <p><b>Branch:</b> ${env.GIT_BRANCH}</p>
+                
+                <p><a href="${env.BUILD_URL}console">View Console Output</a></p>
+                <p><a href="${env.BUILD_URL}testReport">View Test Results</a></p>
+                """,
+                mimeType: 'text/html',
+                to: 'your.email@example.com'
+            )
         }
     }
 }
