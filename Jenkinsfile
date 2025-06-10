@@ -149,9 +149,9 @@ pipeline {
                 // Only send email on success if it was previously failing
                 if (currentBuild.getPreviousBuild()?.result == 'FAILURE') {
                     emailext (
-                        subject: "✅ Build Fixed - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                        subject: "Build Fixed - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                         body: """
-                        <h3>🎉 Build is now working!</h3>
+                        <h3>Build is now working!</h3>
                         <p><b>Job:</b> ${env.JOB_NAME}</p>
                         <p><b>Build Number:</b> ${env.BUILD_NUMBER}</p>
                         <p><b>Branch:</b> ${env.GIT_BRANCH}</p>
@@ -163,7 +163,7 @@ pipeline {
                         <p><a href="${env.BUILD_URL}console">View Console Output</a></p>
                         """,
                         mimeType: 'text/html',
-                        to: 'rakha.tradersfamily@gmail.com'
+                        to: "${env.DEV_EMAIL}"
                     )
                 }
             }
@@ -181,9 +181,9 @@ pipeline {
             echo 'Pipeline failed!'
             // You could add a failure notification here
             emailext (
-                subject: "❌ Build Failed - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                subject: "Build Failed - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
-                <h3>🚨 Build Failed</h3>
+                <h3>Build Failed</h3>
                 <p><b>Job:</b> ${env.JOB_NAME}</p>
                 <p><b>Build Number:</b> ${env.BUILD_NUMBER}</p>
                 <p><b>Branch:</b> ${env.GIT_BRANCH}</p>
@@ -203,16 +203,16 @@ pipeline {
                 <p>Commit: ${env.GIT_COMMIT}</p>
                 """,
                 mimeType: 'text/html',
-                to: 'rakha.tradersfamily@gmail.com, another.teammate@example.com'
+                to: "${env.DEV_EMAIL}"
             )
         }
 
         unstable {
             echo 'Pipeline is unstable (tests failed but build succeeded)'
             emailext (
-                subject: "⚠️ Build Unstable - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                subject: "Build Unstable - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
-                <h3>⚠️ Build Unstable</h3>
+                <h3>Build Unstable</h3>
                 <p>The build completed but some tests failed or there are warnings.</p>
                 
                 <p><b>Job:</b> ${env.JOB_NAME}</p>
@@ -223,7 +223,7 @@ pipeline {
                 <p><a href="${env.BUILD_URL}testReport">View Test Results</a></p>
                 """,
                 mimeType: 'text/html',
-                to: 'rakha.tradersfamily@gmail.com'
+                to: "${env.DEV_EMAIL}"
             )
         }
     }
