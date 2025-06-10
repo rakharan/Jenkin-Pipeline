@@ -173,7 +173,7 @@ pipeline {
             echo 'Pipeline succeeded!'
             script {
                     discordSend(
-                    webhookCredentialId: 'DISCORD_WEBHOOK',
+                    webhookURL: "${env.DISCORD_WEBHOOK}",
                     title: "✅ Build Succeeded: ${env.JOB_NAME}",
                     description: "Build #${env.BUILD_NUMBER} completed successfully.",
                     color: '#00ff00', // Green
@@ -185,7 +185,7 @@ pipeline {
         failure {
             echo 'Pipeline failed!'
             discordSend(
-                webhookCredentialId: 'DISCORD_WEBHOOK',
+                webhookURL: "${env.DISCORD_WEBHOOK}",
                 title: "❌ Build Failed: ${env.JOB_NAME}",
                 description: "Build #${env.BUILD_NUMBER} failed. Please check the logs.",
                 color: '#ff0000', // Red
@@ -196,7 +196,7 @@ pipeline {
         unstable {
             echo 'Pipeline is unstable (tests failed but build succeeded)'
             discordSend(
-                webhookCredentialId: 'DISCORD_WEBHOOK',
+                webhookURL: "${env.DISCORD_WEBHOOK}",
                 title: "⚠️ Build Unstable: ${env.JOB_NAME}",
                 description: "Build #${env.BUILD_NUMBER} completed, but tests failed.",
                 color: '#ffff00', // Yellow
