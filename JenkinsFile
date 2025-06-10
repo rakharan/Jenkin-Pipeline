@@ -4,6 +4,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
+                // Jenkins fetch from the repository.
                 echo 'Code checked out successfully.'
             }
         }
