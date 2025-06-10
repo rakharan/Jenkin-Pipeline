@@ -8,6 +8,7 @@ pipeline {
         DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
         DOCKER_HUB_USERNAME = 'rakhatf' // <== CHANGE THIS
         IMAGE_NAME = "${DOCKER_HUB_USERNAME}/my-typescript-app"
+        DISCORD_WEBHOOK = credentials('DISCORD_WEBHOOK')
     }
 
     // 2. Define the tools needed for the pipeline
@@ -27,7 +28,7 @@ pipeline {
                         footer: "Deployment Status: STARTED", 
                         link: env.BUILD_URL, 
                         result: currentBuild.currentResult, 
-                        webhookURL: "${env.DISCORD_WEBHOOK}"
+                        webhookURL: env.DISCORD_WEBHOOK
                     }
                 }
             }
@@ -186,7 +187,7 @@ pipeline {
             echo 'Pipeline succeeded!'
             script {
                 discordSend title: 'Deployment Status: SUCCESS',
-                webhookURL: "${env.DISCORD_WEBHOOK}",
+                webhookURL: env.DISCORD_WEBHOOK,
                 description: "Build #${env.BUILD_NUMBER} completed successfully.",
                 link: env.BUILD_URL,
                 footer: "Deployment Status: SUCCESS"
@@ -197,7 +198,7 @@ pipeline {
             echo 'Pipeline failed!'
             script {
                 discordSend title: "Build Failed: ${env.JOB_NAME}",
-                webhookURL: "${env.DISCORD_WEBHOOK}",
+                webhookURL: env.DISCORD_WEBHOOK,
                 description: "Build #${env.BUILD_NUMBER} failed. Please check the logs.",
                 link: env.BUILD_URL,
                 footer: "Deployment Status: FAILED"
@@ -208,7 +209,7 @@ pipeline {
             echo 'Pipeline is unstable (tests failed but build succeeded)'
             script {
                 discordSend title: "Build Unstable: ${env.JOB_NAME}",
-                webhookURL: "${env.DISCORD_WEBHOOK}",
+                webhookURL: env.DISCORD_WEBHOOK,
                 description: "Build #${env.BUILD_NUMBER} completed, but tests failed.",
                 link: env.BUILD_URL,
                 footer: "Deployment Status: UNSTABLE"
