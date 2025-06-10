@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                echo 'Code checked out successfully.'
+            }
+        }
+        stage('Run a simple command') {
+            steps {
+                echo 'Running a step on the checked-out code.'
+                bat 'dir'
+            }
+        }
+    }
+}
