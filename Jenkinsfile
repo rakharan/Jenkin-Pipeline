@@ -203,7 +203,7 @@ pipeline {
                 <p>Commit: ${env.GIT_COMMIT}</p>
                 """,
                 mimeType: 'text/html',
-                to: '${DEV_EMAI:}'
+                to: '${DEV_EMAIL}'
             )
         }
 
