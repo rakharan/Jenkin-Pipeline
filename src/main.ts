@@ -17,7 +17,7 @@ export function add(a: number, b: number): number {
  */
 function main() {
     const x = 5;
-    const y = 10;
+    const y : 10;
     const result = add(x, y);
     console.log(`The sum of ${x} and ${y} is: ${result}`);
 }
