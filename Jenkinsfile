@@ -151,7 +151,7 @@ pipeline {
                     emailext (
                         subject: "Build Fixed - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                         body: """
-                        <h3>🎉 Build is now working!</h3>
+                        <h3>Build is now working!</h3>
                         <p><b>Job:</b> ${env.JOB_NAME}</p>
                         <p><b>Build Number:</b> ${env.BUILD_NUMBER}</p>
                         <p><b>Branch:</b> ${env.GIT_BRANCH}</p>
