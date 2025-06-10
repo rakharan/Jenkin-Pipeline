@@ -185,31 +185,34 @@ pipeline {
         success {
             echo 'Pipeline succeeded!'
             script {
-                    discordSend title: 'Deployment Status: SUCCESS',
-                    webhookURL: "${env.DISCORD_WEBHOOK}",
-                    title: "Build Succeeded: ${env.JOB_NAME}",
-                    description: "Build #${env.BUILD_NUMBER} completed successfully.",
-                    link: env.BUILD_URL
+                discordSend title: 'Deployment Status: SUCCESS',
+                webhookURL: "${env.DISCORD_WEBHOOK}",
+                description: "Build #${env.BUILD_NUMBER} completed successfully.",
+                link: env.BUILD_URL
+                footer: "Deployment Status: SUCCESS",
             }
         }
 
         failure {
             echo 'Pipeline failed!'
-            discordSend
+            script {
+                discordSend title: "Build Failed: ${env.JOB_NAME}",
                 webhookURL: "${env.DISCORD_WEBHOOK}",
-                title: "Build Failed: ${env.JOB_NAME}",
                 description: "Build #${env.BUILD_NUMBER} failed. Please check the logs.",
                 link: env.BUILD_URL
-                footer: "Deployment Status: FAILED", 
+                footer: "Deployment Status: FAILED",
+            }
         }
 
         unstable {
             echo 'Pipeline is unstable (tests failed but build succeeded)'
-            discordSend
+            script {
+                discordSend title: "Build Unstable: ${env.JOB_NAME}",
                 webhookURL: "${env.DISCORD_WEBHOOK}",
-                title: "Build Unstable: ${env.JOB_NAME}",
                 description: "Build #${env.BUILD_NUMBER} completed, but tests failed.",
                 link: env.BUILD_URL
+                footer: "Deployment Status: UNSTABLE",
+            }
         }
     }
 }
