@@ -163,7 +163,7 @@ pipeline {
                         <p><a href="${env.BUILD_URL}console">View Console Output</a></p>
                         """,
                         mimeType: 'text/html',
-                        to: ${env.DEV_EMAIL}
+                        to: "${env.DEV_EMAIL}"
                     )
                 }
             }
@@ -203,7 +203,7 @@ pipeline {
                 <p>Commit: ${env.GIT_COMMIT}</p>
                 """,
                 mimeType: 'text/html',
-                to: ${env.DEV_EMAIL}
+                to: "${env.DEV_EMAIL}"
             )
         }
 
@@ -223,7 +223,7 @@ pipeline {
                 <p><a href="${env.BUILD_URL}testReport">View Test Results</a></p>
                 """,
                 mimeType: 'text/html',
-                to: ${env.DEV_EMAIL}
+                to: "${env.DEV_EMAIL}"
             )
         }
     }
