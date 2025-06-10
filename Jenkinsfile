@@ -123,12 +123,37 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy') {
+            // This 'when' block is the key. It tells Jenkins to only
+            // execute this stage if the branch being built is 'main'.
+            when {
+                branch 'main'
+            }
+            
+            steps {
+                echo 'Deploying to staging environment...'
+                // Here you would add your deployment script or command
+                // For example, you might use a shell script or a specific deployment tool
+                // bat 'deploy-staging.sh' // Uncomment and replace with your actual deployment command
+            }
+        }
     }
 
     // 4. Define actions to take after the pipeline completes
     post {
         always {
             echo 'Pipeline finished.'
+            
+            // Send a generic email notification
+            emailext (
+                subject: "Build Status: ${currentBuild.currentResult} - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """<p>Check console output at <a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a></p>
+                         <p><b>Build Log:</b></p>
+                         <pre>${currentBuild.rawBuild.getLog(150)}</pre>""",
+                to: 'your.email@example.com, another.teammate@example.com'
+            )
+
             // Clean up the workspace to save disk space
             cleanWs()
         }
